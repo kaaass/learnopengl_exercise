@@ -65,5 +65,15 @@ float transparentVertices[] = {
     1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
     1.0f,  0.5f,  0.0f,  1.0f,  0.0f
 };
+float quadVertices[] = {
+    // positions         // texture Coords
+    -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, // lu
+    -1.0f, -1.0f,  0.0f,  0.0f,  0.0f, // ld
+    1.0f, -1.0f,  0.0f,  1.0f,  0.0f,  // rd
+
+    -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+    1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+    1.0f,  1.0f,  0.0f,  1.0f,  1.0f
+};
 
 #endif
