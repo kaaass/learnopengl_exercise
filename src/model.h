@@ -17,9 +17,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-unsigned int textureFromFile(string filepath, string directory, int mode = GL_RGBA);
+unsigned int textureFromFile(string filepath, string directory);
 
-unsigned int loadTexture(string filepath, int mode = GL_RGBA);
+unsigned int loadTexture(string filepath, int warp_s = GL_REPEAT, int warp_t = GL_REPEAT);
 
 class Model {
 public:
@@ -147,17 +147,17 @@ private:
     }
 };
 
-unsigned int textureFromFile(string filepath, string directory, int mode) {
+unsigned int textureFromFile(string filepath, string directory) {
     int pos = 0;
     // Win路径修正
     while ((pos = filepath.find("\\")) >= 0) {
         filepath.replace(pos, 1, "/");
     }
     filepath = directory + "/" + filepath;
-    return loadTexture(filepath, mode);
+    return loadTexture(filepath);
 }
 
-unsigned int loadTexture(string filepath, int mode) {
+unsigned int loadTexture(string filepath, int warp_s, int warp_t) {
     unsigned int texture = 0;
     std::cout << "Start loading texture: " << filepath << std::endl;
     // Create texture
@@ -166,6 +166,7 @@ unsigned int loadTexture(string filepath, int mode) {
     int width, height, nrChannels;
     // stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
+    int mode;
     if (data) {
         if (nrChannels == 1)
             mode = GL_RED;
@@ -179,8 +180,8 @@ unsigned int loadTexture(string filepath, int mode) {
         glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, mode, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         // Configure wrap and filter type
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, warp_s);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, warp_t);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     } else {
