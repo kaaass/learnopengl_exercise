@@ -1,3 +1,6 @@
+#ifndef MESH_H
+#define MESH_H
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <assimp/postprocess.h>
 
 using namespace std;
 
@@ -19,6 +23,7 @@ struct Vertex {
 struct Texture {
     unsigned int id;
     string type;
+    aiString path;
 };
 
 class Mesh {
@@ -53,7 +58,8 @@ public:
                 number = std::to_string(diffuseNr++);
             else if(name == "texture_specular")
                 number = std::to_string(specularNr++);
-
+            if (number[0] != '1')
+                std::cout << name + number << std::endl;
             shader.setInt("material." + name + number, i);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
@@ -100,3 +106,5 @@ private:
         glBindVertexArray(0);
     }
 };
+
+#endif
