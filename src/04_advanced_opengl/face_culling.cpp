@@ -95,6 +95,8 @@ void prepareDraw() {
     // shader
     shader->use();
     shader->setInt("texture1", 0);
+
+    glFrontFace(GL_CW);
 }
 
 void drawStaff() {
@@ -103,6 +105,8 @@ void drawStaff() {
     projection = glm::perspective(glm::radians(camera->zoom), (float) screenWidth / screenHeight, 0.1f, 100.0f);
     glm::mat4 view = camera->getViewMatrix();
     glm::mat4 model = glm::mat4(1.0f);
+
+    glEnable(GL_CULL_FACE);
 
     // Floor
     shader->use();
@@ -124,6 +128,8 @@ void drawStaff() {
     model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
     shader->setMat4("model", model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    glDisable(GL_CULL_FACE);
 
     // Grass
     std::map<float, glm::vec3> sorted;
