@@ -1,2 +1,4 @@
 build
 src/03_model_loading/model/*
+
+*.zip
