@@ -19,7 +19,7 @@
 
 unsigned int textureFromFile(string filepath, string directory);
 
-unsigned int loadTexture(string filepath, int warp_s = GL_REPEAT, int warp_t = GL_REPEAT);
+unsigned int loadTexture(string filepath, int warp_s = GL_REPEAT, int warp_t = GL_REPEAT, bool gammaCorrection = false);
 
 class Model {
 public:
@@ -157,7 +157,7 @@ unsigned int textureFromFile(string filepath, string directory) {
     return loadTexture(filepath);
 }
 
-unsigned int loadTexture(string filepath, int warp_s, int warp_t) {
+unsigned int loadTexture(string filepath, int warp_s, int warp_t, bool gammaCorrection) {
     unsigned int texture = 0;
     std::cout << "Start loading texture: " << filepath << std::endl;
     // Create texture
@@ -166,18 +166,22 @@ unsigned int loadTexture(string filepath, int warp_s, int warp_t) {
     int width, height, nrChannels;
     // stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
-    int mode;
+    GLenum mode;
+    GLenum internal;
     if (data) {
-        if (nrChannels == 1)
-            mode = GL_RED;
-        else if (nrChannels == 3)
+        if (nrChannels == 1) {
+            internal = mode = GL_RED;
+        } else if (nrChannels == 3) {
+            internal = gammaCorrection ? GL_SRGB : GL_RGB;
             mode = GL_RGB;
-        else if (nrChannels == 4)
+        } else if (nrChannels == 4) {
+            internal = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
             mode = GL_RGBA;
+        }
         // std::cout << nrChannels << std::endl;
         glBindTexture(GL_TEXTURE_2D, texture);
         // Load data
-        glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, mode, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, internal, width, height, 0, mode, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         // Configure wrap and filter type
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, warp_s);
