@@ -71,6 +71,10 @@ public:
         glBindVertexArray(0);
     }
 
+    GLuint getVaoName() {
+        return VAO;
+    }
+
 private:
 
     /*  渲染数据  */
