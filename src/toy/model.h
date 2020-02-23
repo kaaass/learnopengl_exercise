@@ -6,9 +6,9 @@
 #include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "shader_s.h"
+#include "../shader_s.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "../stb_image.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -37,8 +37,9 @@ public:
     }
 
     void draw(Shader shader) {
-        for (auto mesh : meshes)
+        for (auto mesh : meshes) {
             mesh.draw(shader);
+        }
     }
 
 private:
@@ -59,10 +60,12 @@ private:
     }
 
     void processNode(aiNode *node, const aiScene *scene, int layerCnt = 0) {
+#ifdef PRINT_NODE
         // 打印Node名称
         for (int i = 0; i < layerCnt; i++)
             std::cout << " -";
-        std::cout << " " << node->mName.C_Str() << std::endl;
+        std::cout << " " << node->mName.C_Str() << ", num = " << node->mNumMeshes << std::endl;
+#endif
         // 处理节点所有的网格（如果有的话）
         for(int i = 0; i < node->mNumMeshes; i++) {
             aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
@@ -78,7 +81,9 @@ private:
         vector<Vertex> vertices;
         vector<unsigned int> indices;
         vector<Texture> textures;
-
+#ifdef PRINT_MESH
+        std::cout << " :- mesh: " << mesh->mName.C_Str() << std::endl;
+#endif
         for (int i = 0; i < mesh->mNumVertices; i++) {
             Vertex vertex;
             glm::vec3 vector; 
@@ -163,7 +168,7 @@ unsigned int textureFromFile(string filepath, string directory) {
 
 unsigned int loadTexture(string filepath, int warp_s, int warp_t, bool gammaCorrection) {
     unsigned int texture = 0;
-    std::cout << "Start loading texture: " << filepath << std::endl;
+    std::cout << " :- - Start loading texture: " << filepath << std::endl;
     // Create texture
     glGenTextures(1, &texture);
     // Load and generate texture
